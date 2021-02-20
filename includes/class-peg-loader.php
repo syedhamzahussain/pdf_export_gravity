@@ -23,8 +23,8 @@ if ( ! class_exists( 'PEG_LOADER' ) ) {
 		public function __construct() {
 			$this->includes();
 			add_action( 'admin_enqueue_scripts', array( $this, 'register_backend_scripts' ) );
-			add_action( 'wp_enqueue_scripts', array( $this, 'register_frontend_scripts' ) );
-			add_action( 'plugins_loaded', array( $this, 'PEG_load_plugin_textdomain' ) );
+			// add_action( 'wp_enqueue_scripts', array( $this, 'register_frontend_scripts' ) );
+			// add_action( 'plugins_loaded', array( $this, 'PEG_load_plugin_textdomain' ) );
 		}
 
 		/**
@@ -36,10 +36,9 @@ if ( ! class_exists( 'PEG_LOADER' ) ) {
 			if ( wp_doing_ajax() ) {
 
 				// inluding all files those will only use in ajax request.
-				require_once PEG_PLUGIN_URL . '/class-peg-ajax.php';
+				require_once PEG_ABSPATH . '/includes/class-peg-ajax.php';
 			}
 
-			// require_once PEG_PLUGIN_URL . '/class-peg-ajax.php';
 		}
 
 		/**
@@ -55,7 +54,7 @@ if ( ! class_exists( 'PEG_LOADER' ) ) {
 				// localize script.
 				wp_localize_script(
 					'peg-script',
-					'PEG_ajax',
+					'peg_ajax',
 					array(
 						'ajaxurl' => admin_url( 'admin-ajax.php' ),
 					)
@@ -68,15 +67,13 @@ if ( ! class_exists( 'PEG_LOADER' ) ) {
 		 */
 		public function register_backend_scripts() {
 
-			// enqueue plugin styles and scripts.
-			wp_enqueue_script( 'select2-script', PEG_ASSETS_DIR_URL . '/admin/select2.min.js', array(), true );
 			wp_enqueue_script( 'peg-script', PEG_ASSETS_DIR_URL . '/admin/admin.js', array( 'jquery' ), true );
 			wp_enqueue_style( 'peg-style', PEG_ASSETS_DIR_URL . '/admin/style.css', true, 'all' );
 
 			// localize script.
 			wp_localize_script(
 				'peg-script',
-				'PEG_ajax',
+				'peg_ajax',
 				array(
 					'ajaxurl' => admin_url( 'admin-ajax.php' ),
 				)

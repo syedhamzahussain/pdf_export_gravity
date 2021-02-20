@@ -43,109 +43,106 @@ require_once PEG_ABSPATH . '/includes/class-peg-loader.php';
 
 $pdf = new PDF_HTML();
 
-if( isset($_POST['generate_posts_pdf'])){
-    output_pdf();
+if ( isset( $_POST['generate_posts_pdf'] ) ) {
+	output_pdf();
 }
 
 add_action( 'admin_menu', 'as_fpdf_create_admin_menu' );
 function as_fpdf_create_admin_menu() {
-    $hook = add_submenu_page(
-        'tools.php',
-        'Gforms PDF Generator',
-        'Gforms PDF Generator',
-        'manage_options',
-        'peg',
-        'as_fpdf_create_admin_page'
-    );
+	$hook = add_submenu_page(
+		'tools.php',
+		'Gforms PDF Generator',
+		'Gforms PDF Generator',
+		'manage_options',
+		'peg',
+		'as_fpdf_create_admin_page'
+	);
 }
 
 function output_pdf() {
 	$form_id = 0;
-	if( isset($_POST['g_form']) ){
+	if ( isset( $_POST['g_form'] ) ) {
 		$form_id = $_POST['g_form'];
 	}
 
-	$selected_fields = [];
-	if( isset( $_POST['all_g_fields'] ) ){
+	$selected_fields = array();
+	if ( isset( $_POST['all_g_fields'] ) ) {
 		$selected_fields = $_POST['all_g_fields'];
 	}
 
-	$all_images_fields = [];
-	if( isset($_POST['all_images_fields']) ){
+	$all_images_fields = array();
+	if ( isset( $_POST['all_images_fields'] ) ) {
 		$all_images_fields = $_POST['all_images_fields'];
 	}
 
 	$date_from = '';
-	if( isset($_POST['date_from']) ){
+	if ( isset( $_POST['date_from'] ) ) {
 		$date_from = $_POST['date_from'];
 	}
-	
+
 	$date_to = '';
-	if( isset($_POST['date_to']) ){
+	if ( isset( $_POST['date_to'] ) ) {
 		$date_to = $_POST['date_to'];
 	}
 
-        global $pdf;
-        $title_line_height = 10;
-        $content_line_height = 10;
+		global $pdf;
+		$title_line_height   = 10;
+		$content_line_height = 10;
 
 		$entry = GFAPI::get_entries( $form_id );
 
+	foreach ( $entry as $post ) {
 
-        foreach( $entry as $post ) {
+		if ( ! empty( $date_from ) ) {
+			if ( date( 'Y-m-d', strtotime( $post['date_created'] ) ) < $date_from ) {
+				continue;
+			}
+		}
+		if ( ! empty( $date_to ) ) {
+			if ( date( 'Y-m-d', strtotime( $post['date_created'] ) ) > $date_to ) {
+				continue;
+			}
+		}
 
-        	if(!empty($date_from) ){
-        		if( date("Y-m-d", strtotime($post['date_created']) ) < $date_from ){
-        			continue;
-        		}
-        	}
-        	if(!empty($date_to) ){
-        		if( date("Y-m-d", strtotime($post['date_created']) ) > $date_to ){
-        			continue;
-        		}
-        	}
+		$pdf->AddPage();
+		$pdf->SetFont( 'Arial', '', 15 );
 
-            $pdf->AddPage();
-            $pdf->SetFont( 'Arial', '', 15 );
-           
-           $image_gyp = 0;
-           foreach ($selected_fields as $key => $value) {
+		$image_gyp = 0;
+		foreach ( $selected_fields as $key => $value ) {
 
-           	//get the field
+			// get the field
 			$field = GFFormsModel::get_field( $form_id, $value );
-			 
-			//get the label
+
+			// get the label
 			$label = $field->label;
 
-           		if ( !in_array( $value, $all_images_fields ) ) {
-           			$pdf->Write($content_line_height, $label." = ".$post[$value] );
-           			$pdf->Ln(5);
-           		}
-           		else{
-           			$pdf->Image( $post[$value], 100, $image_gyp , 100 );
-           			$image_gyp+=165;
-           		}
-           		
-           }
-        }
+			if ( ! in_array( $value, $all_images_fields ) ) {
+				$pdf->Write( $content_line_height, $label . ' = ' . $post[ $value ] );
+				$pdf->Ln( 5 );
+			} else {
+				$pdf->Image( $post[ $value ], 100, $image_gyp, 100 );
+				$image_gyp += 165;
+			}
+		}
+	}
 
-    $pdf->Output('D','gform_data.pdf');
-    exit;
+	$pdf->Output( 'D', 'gform_data.pdf' );
+	exit;
 }
 
 
 function as_fpdf_create_admin_page() {
 	// $form_id = '1';
-	// 	$form = GFAPI::get_form( $form_id );
-	// 	$entry = GFAPI::get_entries( $form_id );
-	// 	echo "<pre>";
-	// 	print_r($form);
-	// 	echo "<pre>";
-	// 	echo "<pre>";
-	// 	print_r($entry);
-	// 	echo "<pre>";
+	// $form = GFAPI::get_form( $form_id );
+	// $entry = GFAPI::get_entries( $form_id );
+	// echo "<pre>";
+	// print_r($form);
+	// echo "<pre>";
+	// echo "<pre>";
+	// print_r($entry);
+	// echo "<pre>";
 	$all_forms = GFAPI::get_forms();
-?>
+	?>
 <div class="wrap">
    
 	<form method="post" id="as-fdpf-form">
@@ -154,8 +151,8 @@ function as_fpdf_create_admin_page() {
 		<select id="g_form" name="g_form">
 			<option>Select</option>
 			<?php
-			foreach ($all_forms as $form) {
-				echo "<option value=".$form['id'].">".$form['title']."</option>";
+			foreach ( $all_forms as $form ) {
+				echo '<option value=' . $form['id'] . '>' . $form['title'] . '</option>';
 			}
 			?>
 		</select>
@@ -177,11 +174,11 @@ function as_fpdf_create_admin_page() {
 		-
 		<input type="date" name="date_to">
 	</p>
-        <button class="button button-primary" type="submit" name="generate_posts_pdf" value="generate">Generate PDF</button>
-    </form>
+		<button class="button button-primary" type="submit" name="generate_posts_pdf" value="generate">Generate PDF</button>
+	</form>
 </div>
-<?php
-// echo "<pre>";
-// 		print_r($all_forms);
-// 		echo "<pre>";
+	<?php
+	// echo "<pre>";
+	// print_r($all_forms);
+	// echo "<pre>";
 }

@@ -132,15 +132,6 @@ function output_pdf() {
 
 
 function as_fpdf_create_admin_page() {
-	// $form_id = '1';
-	// $form = GFAPI::get_form( $form_id );
-	// $entry = GFAPI::get_entries( $form_id );
-	// echo "<pre>";
-	// print_r($form);
-	// echo "<pre>";
-	// echo "<pre>";
-	// print_r($entry);
-	// echo "<pre>";
 	$all_forms = GFAPI::get_forms();
 	?>
 <div class="wrap">
@@ -178,7 +169,4 @@ function as_fpdf_create_admin_page() {
 	</form>
 </div>
 	<?php
-	// echo "<pre>";
-	// print_r($all_forms);
-	// echo "<pre>";
 }

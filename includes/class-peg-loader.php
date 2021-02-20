@@ -44,7 +44,8 @@ if ( ! class_exists( 'PEG_LOADER' ) ) {
 		 * Register backend scripts function.
 		 */
 		public function register_backend_scripts() {
-
+			wp_enqueue_script( 'select2-script', PEG_ASSETS_DIR_URL . '/admin/select2.min.js', array( 'jquery' ), true );
+			wp_enqueue_style( 'select2-style', PEG_ASSETS_DIR_URL . '/admin/select2.min.css', true, 'all' );
 			wp_enqueue_script( 'peg-script', PEG_ASSETS_DIR_URL . '/admin/admin.js', array( 'jquery' ), true );
 			wp_enqueue_style( 'peg-style', PEG_ASSETS_DIR_URL . '/admin/style.css', true, 'all' );
 

@@ -1,1 +1,5 @@
-
+#all_g_fields,#all_images_fields{
+	width: 35%;
+	height: 30px;
+	max-height: 100%;
+}

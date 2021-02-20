@@ -85,6 +85,7 @@ function output_pdf() {
 		$date_to = $_POST['date_to'];
 	}
 
+
 		global $pdf;
 		$title_line_height   = 10;
 		$content_line_height = 10;
@@ -92,6 +93,14 @@ function output_pdf() {
 		$entry = GFAPI::get_entries( $form_id );
 	if($entry){
 		foreach ( $entry as $post ) {
+
+			if($_POST['condition_star'] == 'Unstarred' && $post['is_starred'] == true){
+					continue;
+			}
+
+			if($_POST['condition_star'] == 'Starred' && $post['is_starred'] == false){
+					continue;
+			}
 
 			if ( ! empty( $date_from ) ) {
 				if ( date( 'Y-m-d', strtotime( $post['date_created'] ) ) < $date_from ) {
@@ -158,6 +167,14 @@ function as_fpdf_create_admin_page() {
 	<p>
 		<label>Select Images Field</label>
 		<select id="all_images_fields" name="all_images_fields[]" multiple="multiple">
+		</select>
+	</p>
+	<p>
+		<label>Conditional ( Select Starred, Unstarred, or Both)</label>
+		<select id="condition_star" name="condition_star" required>
+			<option value="Both">Both</option>
+			<option value="Starred">Starred</option>
+			<option value="Unstarred">Unstarred</option>
 		</select>
 	</p>
 	<p>

@@ -32,7 +32,7 @@ if ( ! class_exists( 'PEG_AJAX' ) ) {
 			$html = '';
 
 			foreach ( $form['fields'] as $field ) {
-				echo "<option value=".$field['id'].">".$field->label."</option>";
+				echo "<option value=".$field['id']." selected>".$field->label."</option>";
 			}
 			
 			wp_die(wp_json_encode($html));

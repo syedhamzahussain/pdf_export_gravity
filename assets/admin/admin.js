@@ -1,5 +1,7 @@
 jQuery( document ).ready(
 	function ($) {
+
+
 		url = peg_ajax.ajaxurl;
 		
 		$( document ).on(
@@ -20,6 +22,14 @@ jQuery( document ).ready(
 						$('#all_g_fields').prepend(response);
 						$('#all_g_fields').removeAttr('disabled');
 						$('#all_images_fields').prepend(response);
+						
+						 $("#all_images_fields option:selected").each(function () {
+						 	$(this).removeAttr('selected'); 
+						 });
+
+						 $('#all_g_fields').select2();
+						 $('#all_images_fields').select2();
+
 					}
 					}
 					);

@@ -90,44 +90,45 @@ function output_pdf() {
 		$content_line_height = 10;
 
 		$entry = GFAPI::get_entries( $form_id );
+	if($entry){
+		foreach ( $entry as $post ) {
 
-	foreach ( $entry as $post ) {
+			if ( ! empty( $date_from ) ) {
+				if ( date( 'Y-m-d', strtotime( $post['date_created'] ) ) < $date_from ) {
+					continue;
+				}
+			}
+			if ( ! empty( $date_to ) ) {
+				if ( date( 'Y-m-d', strtotime( $post['date_created'] ) ) > $date_to ) {
+					continue;
+				}
+			}
 
-		if ( ! empty( $date_from ) ) {
-			if ( date( 'Y-m-d', strtotime( $post['date_created'] ) ) < $date_from ) {
-				continue;
+			$pdf->AddPage();
+			$pdf->SetFont( 'Arial', '', 15 );
+
+			$image_gyp = 0;
+			foreach ( $selected_fields as $key => $value ) {
+
+				// get the field
+				$field = GFFormsModel::get_field( $form_id, $value );
+
+				// get the label
+				$label = $field->label;
+
+				if ( ! in_array( $value, $all_images_fields ) ) {
+					$pdf->Write( $content_line_height, $label . ' = ' . $post[ $value ] );
+					$pdf->Ln( 5 );
+				} else {
+					$pdf->Image( $post[ $value ], 100, $image_gyp, 100 );
+					$image_gyp += 165;
+				}
 			}
 		}
-		if ( ! empty( $date_to ) ) {
-			if ( date( 'Y-m-d', strtotime( $post['date_created'] ) ) > $date_to ) {
-				continue;
-			}
-		}
-
-		$pdf->AddPage();
-		$pdf->SetFont( 'Arial', '', 15 );
-
-		$image_gyp = 0;
-		foreach ( $selected_fields as $key => $value ) {
-
-			// get the field
-			$field = GFFormsModel::get_field( $form_id, $value );
-
-			// get the label
-			$label = $field->label;
-
-			if ( ! in_array( $value, $all_images_fields ) ) {
-				$pdf->Write( $content_line_height, $label . ' = ' . $post[ $value ] );
-				$pdf->Ln( 5 );
-			} else {
-				$pdf->Image( $post[ $value ], 100, $image_gyp, 100 );
-				$image_gyp += 165;
-			}
-		}
-	}
 
 	$pdf->Output( 'D', 'gform_data.pdf' );
 	exit;
+	}
 }
 
 

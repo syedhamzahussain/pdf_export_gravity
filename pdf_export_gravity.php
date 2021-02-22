@@ -3,7 +3,7 @@
  * Plugin Name: PDF Export Gform
  * Description:  Allows you to select Gravity Form Entries by date range and export to PDF.
  * Author: Chris Whitcoe
- * Version: 1.1.1.3
+ * Version: 1.1.1.4
  * Text Domain: peg
  * Domain Path: /languages
  * Plugin URI: http://azmobileapps.com
@@ -58,6 +58,8 @@ function as_fpdf_create_admin_menu() {
 }
 
 function output_pdf() {
+	$images_type =  ['jpeg','jpg'];
+	
 	$form_id = 0;
 	if ( isset( $_POST['g_form'] ) ) {
 		$form_id = $_POST['g_form'];
@@ -87,6 +89,7 @@ function output_pdf() {
 		global $pdf;
 		$title_line_height   = 10;
 		$content_line_height = 10;
+		$d = 0;
 
 		$entry = GFAPI::get_entries( $form_id );
 	if($entry){
@@ -126,15 +129,26 @@ function output_pdf() {
 				if ( ! in_array( $value, $all_images_fields ) ) {
 					$pdf->Write( $content_line_height, $label . ' = ' . $post[ $value ] );
 					$pdf->Ln( 5 );
+					$d ++;
 				} else {
-					$pdf->Image( $post[ $value ], 100, $image_gyp, 100 );
-					$image_gyp += 165;
+					if( in_array( strtolower(pathinfo($post[ $value ], PATHINFO_EXTENSION) ) , $images_type) ){
+						$pdf->Image( $post[ $value ], 200, $image_gyp, 80 );
+						$image_gyp += 130;
+						$d ++;
+					}
+					else{
+						continue;
+					}
 				}
 			}
 		}
 
-	$pdf->Output( 'D', 'gform_data.pdf' );
-	exit;
+	if($d > 1){
+		$pdf->Output( 'D', 'gform_data.pdf' );
+		exit;
+	}
+	
+	
 	}
 }
 

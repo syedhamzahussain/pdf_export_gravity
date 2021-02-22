@@ -1,13 +1,13 @@
 <?php
 /**
  * Plugin Name: PDF Export Gform
- * Description: Give you feature to export gravity forms data.
- * Author: Syed Hamza Hussain
- * Version: 1.1.0.0
+ * Description:  Allows you to select Gravity Form Entries by date range and export to PDF.
+ * Author: Chris Whitcoe
+ * Version: 1.1.1.3
  * Text Domain: peg
  * Domain Path: /languages
- * Plugin URI: #
- * Author URI: #
+ * Plugin URI: http://azmobileapps.com
+ * Author URI: https://www.linkedin.com/in/whitcoe
  * WC tested up to: 5.0.0
  */
 
@@ -36,8 +36,6 @@ if ( ! defined( 'PEG_ASSETS_DIR_URL' ) ) {
 }
 
 require_once PEG_ABSPATH . '/helpers.php';
-
-
 require_once PEG_ABSPATH . '/constants.php';
 require_once PEG_ABSPATH . '/includes/class-peg-loader.php';
 
@@ -51,8 +49,8 @@ add_action( 'admin_menu', 'as_fpdf_create_admin_menu' );
 function as_fpdf_create_admin_menu() {
 	$hook = add_submenu_page(
 		'tools.php',
-		'Gforms PDF Generator',
-		'Gforms PDF Generator',
+		'PDF Export Gform',
+		'PDF Export Gform',
 		'manage_options',
 		'peg',
 		'as_fpdf_create_admin_page'
@@ -113,7 +111,7 @@ function output_pdf() {
 				}
 			}
 
-			$pdf->AddPage();
+			$pdf->AddPage('L','Letter');
 			$pdf->SetFont( 'Arial', '', 15 );
 
 			$image_gyp = 0;
@@ -159,13 +157,13 @@ function as_fpdf_create_admin_page() {
 		</select>
 	</p>
 	<p>
-		<label>Select Fields</label>
+		<label>Select Data Fields</label>
 		<select id="all_g_fields" name="all_g_fields[]" multiple="multiple" disabled required>
 
 		</select>
 	</p>
 	<p>
-		<label>Select Images Field</label>
+		<label>Select Images Fields</label>
 		<select id="all_images_fields" name="all_images_fields[]" multiple="multiple">
 		</select>
 	</p>
@@ -173,7 +171,7 @@ function as_fpdf_create_admin_page() {
 		<label>Conditional ( Select Starred, Unstarred, or Both)</label>
 		<select id="condition_star" name="condition_star" required>
 			<option value="Both">Both</option>
-			<option value="Starred">Starred</option>
+			<option value="Starred" selected>Starred</option>
 			<option value="Unstarred">Unstarred</option>
 		</select>
 	</p>
